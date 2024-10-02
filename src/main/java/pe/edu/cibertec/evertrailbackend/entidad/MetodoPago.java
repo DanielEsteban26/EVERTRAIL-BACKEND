@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 /**
@@ -15,6 +16,7 @@ public class MetodoPago {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference("usuario-metodoPago") // Breaks the recursion in serialization
     private Usuario usuario; // Usuario al que pertenece el método de pago
 
     @Column(name = "numero_tarjeta", nullable = false)

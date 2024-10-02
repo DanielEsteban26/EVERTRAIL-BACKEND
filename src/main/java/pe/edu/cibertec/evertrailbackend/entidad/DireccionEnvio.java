@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 /**
@@ -16,6 +17,7 @@ public class DireccionEnvio {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference("usuario-direccionEnvio") // Rompe la recursión en la serialización
     private Usuario usuario; // Usuario al que pertenece la dirección de envío
 
     @Column(name = "linea_direccion1", nullable = false)

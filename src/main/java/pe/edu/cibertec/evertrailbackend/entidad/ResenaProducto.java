@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 /**
@@ -8,7 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "reseñas_productos")
-public class ReseñaProducto {
+public class ResenaProducto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,10 +17,12 @@ public class ReseñaProducto {
 
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
+    @JsonBackReference("producto-reseña") // Rompe la recursión en la serialización
     private Producto producto; // Producto al que pertenece la reseña
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference("usuario-reseñaProducto") // Breaks the recursion in serialization
     private Usuario usuario; // Usuario que realizó la reseña
 
     @Column(name = "calificacion", nullable = false)
@@ -29,11 +32,11 @@ public class ReseñaProducto {
     private String reseña; // Texto de la reseña
 
     // Constructor vacío
-    public ReseñaProducto() {
+    public ResenaProducto() {
     }
 
     // Constructor con parámetros
-    public ReseñaProducto(Long id, String reseña, Integer calificacion, Usuario usuario, Producto producto) {
+    public ResenaProducto(Long id, String reseña, Integer calificacion, Usuario usuario, Producto producto) {
         this.id = id;
         this.reseña = reseña;
         this.calificacion = calificacion;

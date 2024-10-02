@@ -1,6 +1,7 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -20,6 +21,7 @@ public class Role {
     private String nombre; // Nombre del rol
 
     @OneToMany(mappedBy = "rol")
+    @JsonBackReference("rol-usuario") // Rompe la recursión en la serialización
     private Set<Usuario> usuarios; // Conjunto de usuarios que tienen este rol
 
     // Constructor vacío

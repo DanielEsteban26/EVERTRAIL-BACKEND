@@ -1,5 +1,7 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -18,6 +20,7 @@ public class Pedido {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference("usuario-pedido") // Rompe la recursión en la serialización
     private Usuario usuario; // Usuario que realizó el pedido
 
     @Column(name = "precio_total", nullable = false)
@@ -27,6 +30,7 @@ public class Pedido {
     private String estado = "Pendiente"; // Estado del pedido
 
     @OneToMany(mappedBy = "pedido")
+    @JsonManagedReference("pedido-detalle") // Rompe la recursión en la serialización
     private Set<DetallePedido> detallesPedido; // Conjunto de detalles del pedido
 
     // Constructor vacío

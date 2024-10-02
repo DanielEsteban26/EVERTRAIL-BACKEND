@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 /**
@@ -16,10 +17,12 @@ public class DetallePedido {
 
     @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
+    @JsonBackReference("pedido-detalle") // Rompe la recursión en la serialización
     private Pedido pedido; // Pedido al que pertenece el detalle
 
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
+    @JsonBackReference("producto-detalle") // Rompe la recursión en la serialización
     private Producto producto; // Producto al que pertenece el detalle
 
     @Column(name = "cantidad", nullable = false)

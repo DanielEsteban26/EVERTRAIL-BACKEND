@@ -1,5 +1,7 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -30,23 +32,27 @@ public class Producto {
 
     @ManyToOne
     @JoinColumn(name = "categoria_id")
+    @JsonBackReference("categoria-producto") // Rompe la recursión en la serialización
     private Categoria categoria; // Categoría a la que pertenece el producto
 
     @OneToMany(mappedBy = "producto")
+    @JsonManagedReference("producto-imagen") // Rompe la recursión en la serialización
     private Set<ImagenProducto> imagenesProductos; // Conjunto de imágenes del producto
 
     @OneToMany(mappedBy = "producto")
+    @JsonManagedReference("producto-detalle") // Rompe la recursión en la serialización
     private Set<DetallePedido> detallesPedido; // Conjunto de detalles de pedidos que incluyen este producto
 
     @OneToMany(mappedBy = "producto")
-    private Set<ReseñaProducto> reseñasProductos; // Conjunto de reseñas del producto
+    @JsonManagedReference("producto-reseña") // Rompe la recursión en la serialización
+    private Set<ResenaProducto> reseñasProductos; // Conjunto de reseñas del producto
 
     // Constructor vacío
     public Producto() {
     }
 
     // Constructor con parámetros
-    public Producto(Long id, String nombre, String descripcion, Double precio, Integer stock, Categoria categoria, Set<ImagenProducto> imagenesProductos, Set<DetallePedido> detallesPedido, Set<ReseñaProducto> reseñasProductos) {
+    public Producto(Long id, String nombre, String descripcion, Double precio, Integer stock, Categoria categoria, Set<ImagenProducto> imagenesProductos, Set<DetallePedido> detallesPedido, Set<ResenaProducto> reseñasProductos) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -123,11 +129,11 @@ public class Producto {
         this.detallesPedido = detallesPedido;
     }
 
-    public Set<ReseñaProducto> getReseñasProductos() {
+    public Set<ResenaProducto> getReseñasProductos() {
         return reseñasProductos;
     }
 
-    public void setReseñasProductos(Set<ReseñaProducto> reseñasProductos) {
+    public void setReseñasProductos(Set<ResenaProducto> reseñasProductos) {
         this.reseñasProductos = reseñasProductos;
     }
 }

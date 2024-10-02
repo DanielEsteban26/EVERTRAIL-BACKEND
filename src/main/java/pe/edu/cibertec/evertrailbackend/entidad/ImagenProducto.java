@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 /**
@@ -16,6 +17,7 @@ public class ImagenProducto {
 
     @ManyToOne
     @JoinColumn(name = "producto_id", nullable = false)
+    @JsonBackReference("producto-imagen") // Rompe la recursión en la serialización
     private Producto producto; // Producto al que pertenece la imagen
 
     @Column(name = "url_imagen", nullable = false)
@@ -56,4 +58,6 @@ public class ImagenProducto {
     public void setUrlImagen(String urlImagen) {
         this.urlImagen = urlImagen;
     }
+
+
 }

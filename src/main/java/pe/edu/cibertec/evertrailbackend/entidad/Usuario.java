@@ -1,7 +1,11 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,28 +28,35 @@ public class Usuario {
     @Column(name = "contraseña", nullable = false)
     private String contraseña; // Contraseña del usuario
 
+
     @ManyToOne
     @JoinColumn(name = "rol_id", nullable = false)
+    @JsonBackReference("rol-usuario") // Rompe la recursión en la serialización
     private Role rol; // Rol del usuario
 
+
     @OneToMany(mappedBy = "usuario")
+    @JsonBackReference("usuario-pedido") // Rompe la recursión en la serialización
     private Set<Pedido> pedidos; // Conjunto de pedidos realizados por el usuario
 
     @OneToMany(mappedBy = "usuario")
+    @JsonManagedReference("usuario-direccionEnvio") // Rompe la recursión en la serialización
     private Set<DireccionEnvio> direccionesEnvio; // Conjunto de direcciones de envío del usuario
 
     @OneToMany(mappedBy = "usuario")
+    @JsonManagedReference("usuario-metodoPago") // Breaks the recursion in serialization
     private Set<MetodoPago> metodosPago; // Conjunto de métodos de pago del usuario
 
     @OneToMany(mappedBy = "usuario")
-    private Set<ReseñaProducto> reseñasProductos; // Conjunto de reseñas de productos realizadas por el usuario
+    @JsonManagedReference("usuario-reseñaProducto") // Breaks the recursion in serialization
+    private Set<ResenaProducto> reseñasProductos; // Conjunto de reseñas de productos realizadas por el usuario
 
     // Constructor vacío
     public Usuario() {
     }
 
     // Constructor con parámetros
-    public Usuario(Set<MetodoPago> metodosPago, Set<ReseñaProducto> reseñasProductos, Set<DireccionEnvio> direccionesEnvio, Set<Pedido> pedidos, Long id, Role rol, String contraseña, String correo, String nombreUsuario) {
+    public Usuario(Set<MetodoPago> metodosPago, Set<ResenaProducto> reseñasProductos, Set<DireccionEnvio> direccionesEnvio, Set<Pedido> pedidos, Long id, Role rol, String contraseña, String correo, String nombreUsuario) {
         this.metodosPago = metodosPago;
         this.reseñasProductos = reseñasProductos;
         this.direccionesEnvio = direccionesEnvio;
@@ -66,11 +77,11 @@ public class Usuario {
         this.id = id;
     }
 
-    public Set<ReseñaProducto> getReseñasProductos() {
+    public Set<ResenaProducto> getReseñasProductos() {
         return reseñasProductos;
     }
 
-    public void setReseñasProductos(Set<ReseñaProducto> reseñasProductos) {
+    public void setReseñasProductos(Set<ResenaProducto> reseñasProductos) {
         this.reseñasProductos = reseñasProductos;
     }
 
@@ -128,5 +139,10 @@ public class Usuario {
 
     public void setNombreUsuario(String nombreUsuario) {
         this.nombreUsuario = nombreUsuario;
+    }
+
+    // Method to get roles as a List<String>
+    public List<String> getRoles() {
+        return Collections.singletonList(rol.getNombre());
     }
 }

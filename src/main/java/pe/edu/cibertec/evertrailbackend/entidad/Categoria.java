@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -22,6 +23,7 @@ public class Categoria {
     private String descripcion; // Descripción de la categoría
 
     @OneToMany(mappedBy = "categoria")
+    @JsonManagedReference("categoria-producto") // Rompe la recursión en la serialización
     private Set<Producto> productos; // Conjunto de productos que pertenecen a esta categoría
 
     // Constructor vacío
