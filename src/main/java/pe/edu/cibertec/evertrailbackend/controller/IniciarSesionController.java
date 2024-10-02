@@ -39,7 +39,7 @@ public class IniciarSesionController {
             return ResponseEntity.status(401).body("Credenciales inválidas");
         }
 
-        // Suponiendo que la entidad Usuario tiene un método getRoles() que devuelve una Lista<String> de roles
+        /* Suponiendo que la entidad Usuario tiene un método getRoles() que devuelve una Lista<String> de roles*/
         List<String> roles = userResult.getRoles();
         String token = jwtAuthenticationConfig.getJWTToken(user.getNombreUsuario(), roles);
         return ResponseEntity.ok(token);

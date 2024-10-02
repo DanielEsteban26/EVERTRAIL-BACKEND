@@ -29,7 +29,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/categorias/**").hasRole("Administrador")
                         .requestMatchers("/api/pedidos/**").hasRole("Administrador")
                         .requestMatchers("/api/resenas/**").hasRole("Administrador")
-                        .requestMatchers("/api/imagenes/**").hasRole("Administrador")
+                        .requestMatchers("/api/imagenes-producto/**").hasRole("Administrador")
                         .requestMatchers("/api/metodos-pago/**").hasRole("Administrador")
                         .requestMatchers("/api/direcciones-envio/**").hasRole("Administrador")
                         // Permisos para Usuario No Registrado
