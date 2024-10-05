@@ -25,8 +25,8 @@ public class Usuario {
     @Column(name = "correo", unique = true, nullable = false)
     private String correo; // Correo electrónico único
 
-    @Column(name = "contraseña", nullable = false)
-    private String contraseña; // Contraseña del usuario
+    @Column(name = "contrasenia", nullable = false)
+    private String contrasenia; // Contraseña del usuario
 
 
     @ManyToOne
@@ -63,7 +63,7 @@ public class Usuario {
         this.pedidos = pedidos;
         this.id = id;
         this.rol = rol;
-        this.contraseña = contraseña;
+        this.contrasenia = contraseña;
         this.correo = correo;
         this.nombreUsuario = nombreUsuario;
     }
@@ -117,12 +117,12 @@ public class Usuario {
         this.rol = rol;
     }
 
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasenia() {
+        return contrasenia;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasenia(String contraseña) {
+        this.contrasenia = contraseña;
     }
 
     public String getCorreo() {

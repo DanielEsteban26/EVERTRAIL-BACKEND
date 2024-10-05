@@ -7,6 +7,7 @@ import pe.edu.cibertec.evertrailbackend.entidad.DetallePedido;
 import pe.edu.cibertec.evertrailbackend.serviceImp.DetallePedidoService;
 import java.util.Set;
 
+@CrossOrigin(origins = "http://localhost:4200") // Permite solicitudes desde http://localhost:4200
 @RestController // Indica que esta clase es un controlador REST
 @RequestMapping("/api/detalles-pedido") // Mapea las solicitudes HTTP a /api/detalles-pedido
 public class DetallePedidoController {

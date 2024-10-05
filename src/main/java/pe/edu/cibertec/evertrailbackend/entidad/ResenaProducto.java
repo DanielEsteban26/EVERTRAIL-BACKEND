@@ -28,8 +28,8 @@ public class ResenaProducto {
     @Column(name = "calificacion", nullable = false)
     private Integer calificacion; // Calificación del producto
 
-    @Column(name = "reseña")
-    private String reseña; // Texto de la reseña
+    @Column(name = "resena")
+    private String resena; // Texto de la reseña
 
     // Constructor vacío
     public ResenaProducto() {
@@ -38,7 +38,7 @@ public class ResenaProducto {
     // Constructor con parámetros
     public ResenaProducto(Long id, String reseña, Integer calificacion, Usuario usuario, Producto producto) {
         this.id = id;
-        this.reseña = reseña;
+        this.resena = resena;
         this.calificacion = calificacion;
         this.usuario = usuario;
         this.producto = producto;
@@ -54,11 +54,11 @@ public class ResenaProducto {
     }
 
     public String getReseña() {
-        return reseña;
+        return resena;
     }
 
     public void setReseña(String reseña) {
-        this.reseña = reseña;
+        this.resena = reseña;
     }
 
     public Usuario getUsuario() {

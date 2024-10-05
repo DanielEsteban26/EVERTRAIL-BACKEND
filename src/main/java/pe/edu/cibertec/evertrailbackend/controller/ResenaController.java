@@ -8,6 +8,7 @@ import pe.edu.cibertec.evertrailbackend.serviceImp.ResenaProductoService;
 
 import java.util.Set;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/resenas")
 public class ResenaController {

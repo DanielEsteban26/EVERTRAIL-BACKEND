@@ -8,6 +8,7 @@ import pe.edu.cibertec.evertrailbackend.serviceImp.ProductoService;
 
 import java.util.Set;
 
+@CrossOrigin(origins = "http://localhost:4200") // Permitir solicitudes desde http://localhost:4200
 @RestController // Indica que esta clase es un controlador REST
 @RequestMapping("/api/productos") // Mapea las solicitudes HTTP a /api/productos
 public class ProductoController {
@@ -15,6 +16,7 @@ public class ProductoController {
     @Autowired // Inyección de dependencias de Spring
     private ProductoService productoService;
 
+    @CrossOrigin(origins = "http://localhost:4200") // Allow requests from http://localhost:4200
     @GetMapping("/listar") // Mapea las solicitudes GET a /api/productos/listar
     public ResponseEntity<Set<Producto>> getAllProductos() {
         try {

@@ -9,10 +9,10 @@ import pe.edu.cibertec.evertrailbackend.serviceImp.UsuarioService;
 
 import java.util.Set;
 
+@CrossOrigin(origins = "http://localhost:4200") // Permite solicitudes desde http://localhost:4200
 @RestController // Indica que esta clase es un controlador REST
 @RequestMapping("/api/usuarios") // Mapea las solicitudes HTTP a /api/usuarios
 public class UsuarioController {
-
     @Autowired // Inyección de dependencias de Spring
     private UsuarioService usuarioService;
 
@@ -49,7 +49,7 @@ public class UsuarioController {
 
             // Encriptar la contraseña
             BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-            usuario.setContraseña(passwordEncoder.encode(usuario.getContraseña()));
+            usuario.setContrasenia(passwordEncoder.encode(usuario.getContrasenia()));
 
             // Registrar el nuevo usuario
             usuarioService.registrar(usuario);

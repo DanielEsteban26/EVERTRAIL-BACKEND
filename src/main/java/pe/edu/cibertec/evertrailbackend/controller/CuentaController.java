@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.cibertec.evertrailbackend.entidad.Usuario;
 import pe.edu.cibertec.evertrailbackend.serviceImp.CuentaService;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/cuenta")
 public class CuentaController {
