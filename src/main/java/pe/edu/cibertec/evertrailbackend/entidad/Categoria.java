@@ -1,16 +1,18 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-/**
- * Entidad que representa la tabla de categorías.
- */
-
 @Entity
 @Table(name = "categorias")
+@Data
+@NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,50 +25,5 @@ public class Categoria {
     private String descripcion; // Descripción de la categoría
 
     @OneToMany(mappedBy = "categoria")
-    @JsonManagedReference("categoria-producto") // Rompe la recursión en la serialización
     private Set<Producto> productos; // Conjunto de productos que pertenecen a esta categoría
-
-    // Constructor vacío
-    public Categoria() {
-    }
-    // Constructor con parámetros
-    public Categoria(Long id, String nombre, String descripcion, Set<Producto> productos) {
-        this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.productos = productos;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public Set<Producto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(Set<Producto> productos) {
-        this.productos = productos;
-    }
 }

@@ -1,28 +1,27 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-
-/**
- * Entidad que representa la tabla de detalles del pedido.
- */
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "detalles_pedido")
+@Data
+@NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DetallePedido {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Identificador único para cada detalle del pedido
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
-    @JsonBackReference("pedido-detalle") // Rompe la recursión en la serialización
     private Pedido pedido; // Pedido al que pertenece el detalle
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
-    @JsonBackReference("producto-detalle") // Rompe la recursión en la serialización
     private Producto producto; // Producto al que pertenece el detalle
 
     @Column(name = "cantidad", nullable = false)
@@ -31,57 +30,4 @@ public class DetallePedido {
     @Column(name = "precio", nullable = false)
     private Double precio; // Precio del producto en el pedido
 
-    // Constructor vacío
-    public DetallePedido() {
-    }
-
-    // Constructor con parámetros
-    public DetallePedido(Long id, Double precio, Integer cantidad, Producto producto, Pedido pedido) {
-        this.id = id;
-        this.precio = precio;
-        this.cantidad = cantidad;
-        this.producto = producto;
-        this.pedido = pedido;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Double getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(Double precio) {
-        this.precio = precio;
-    }
 }

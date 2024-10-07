@@ -1,8 +1,11 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
@@ -12,6 +15,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "roles")
+@Data
+@NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,42 +27,5 @@ public class Role {
     private String nombre; // Nombre del rol
 
     @OneToMany(mappedBy = "rol")
-    @JsonBackReference("rol-usuario") // Rompe la recursión en la serialización
     private Set<Usuario> usuarios; // Conjunto de usuarios que tienen este rol
-
-    // Constructor vacío
-    public Role() {
-    }
-
-    // Constructor con parámetros
-    public Role(Long id, String nombre, Set<Usuario> usuarios) {
-        this.id = id;
-        this.nombre = nombre;
-        this.usuarios = usuarios;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Set<Usuario> getUsuarios() {
-        return usuarios;
-    }
-
-    public void setUsuarios(Set<Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 }

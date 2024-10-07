@@ -46,7 +46,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/metodos-pago/**").hasRole("Cliente")
                         .requestMatchers("/api/direcciones-envio/**").hasRole("Cliente")
                         // Permitir acceso a la página de login y logout
-                        .requestMatchers(LOGIN_URL, "/user/logout").permitAll()
+                        .requestMatchers(LOGIN_URL, "/user/login", "/user/logout").permitAll()
                         // Cualquier otra solicitud requiere autenticación
                         .anyRequest().authenticated())
                 .addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

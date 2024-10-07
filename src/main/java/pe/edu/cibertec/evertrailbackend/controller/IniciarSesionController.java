@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.cibertec.evertrailbackend.entidad.Usuario;
 import pe.edu.cibertec.evertrailbackend.repositorio.UsuarioRepository;
+import pe.edu.cibertec.evertrailbackend.response.LoginResponse;
 import pe.edu.cibertec.evertrailbackend.security.JWTAuthenticationConfig;
 import pe.edu.cibertec.evertrailbackend.serviceImp.TokenRevocationService;
 
@@ -41,16 +42,16 @@ public class IniciarSesionController {
             return ResponseEntity.status(401).body("Credenciales inválidas");
         }
 
-        // Suponiendo que la entidad Usuario tiene un método getRoles() que devuelve una Lista<String> de roles
         List<String> roles = userResult.getRoles();
         String token = jwtAuthenticationConfig.getJWTToken(user.getNombreUsuario(), roles);
-        String role = roles.isEmpty() ? "Cliente" : roles.get(0); // Suponiendo que el primer rol es el principal
-        return ResponseEntity.ok("{\"token\":\"" + token + "\", \"role\":\"" + role + "\"}");
+        String rol = roles.isEmpty() ? "Cliente" : roles.get(0);
+
+        LoginResponse loginResponse = new LoginResponse(token, rol, "Inicio de sesión exitoso");
+        return ResponseEntity.ok(loginResponse);
     }
 
-    @PostMapping("/logout")
+        @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody String token) {
-        // Añadir el token a la lista de tokens revocados
         tokenRevocationService.revokeToken(token);
         return ResponseEntity.ok("{\"message\": \"Token revocado\"}");
     }

@@ -1,14 +1,22 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Entidad que representa la tabla de direcciones de envío.
  */
-
 @Entity
 @Table(name = "direcciones_envio")
+@Data
+@NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class DireccionEnvio {
 
     @Id
@@ -17,7 +25,6 @@ public class DireccionEnvio {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonBackReference("usuario-direccionEnvio") // Rompe la recursión en la serialización
     private Usuario usuario; // Usuario al que pertenece la dirección de envío
 
     @Column(name = "linea_direccion1", nullable = false)
@@ -37,85 +44,4 @@ public class DireccionEnvio {
 
     @Column(name = "pais", nullable = false)
     private String pais; // País de la dirección
-
-    // Constructor vacío
-    public DireccionEnvio() {
-    }
-
-    // Constructor con parámetros
-    public DireccionEnvio(Long id, String pais, String codigoPostal, String estado, String ciudad, String lineaDireccion2, String lineaDireccion1, Usuario usuario) {
-        this.id = id;
-        this.pais = pais;
-        this.codigoPostal = codigoPostal;
-        this.estado = estado;
-        this.ciudad = ciudad;
-        this.lineaDireccion2 = lineaDireccion2;
-        this.lineaDireccion1 = lineaDireccion1;
-        this.usuario = usuario;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPais() {
-        return pais;
-    }
-
-    public void setPais(String pais) {
-        this.pais = pais;
-    }
-
-    public String getCodigoPostal() {
-        return codigoPostal;
-    }
-
-    public void setCodigoPostal(String codigoPostal) {
-        this.codigoPostal = codigoPostal;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public String getLineaDireccion2() {
-        return lineaDireccion2;
-    }
-
-    public void setLineaDireccion2(String lineaDireccion2) {
-        this.lineaDireccion2 = lineaDireccion2;
-    }
-
-    public String getLineaDireccion1() {
-        return lineaDireccion1;
-    }
-
-    public void setLineaDireccion1(String lineaDireccion1) {
-        this.lineaDireccion1 = lineaDireccion1;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 }

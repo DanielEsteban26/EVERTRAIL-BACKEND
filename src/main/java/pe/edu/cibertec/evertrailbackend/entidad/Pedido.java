@@ -1,26 +1,25 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-/**
- * Entidad que representa la tabla de pedidos.
- */
-
 @Entity
 @Table(name = "pedidos")
+@Data
+@NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Pedido {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Identificador único para cada pedido
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonBackReference("usuario-pedido") // Rompe la recursión en la serialización
     private Usuario usuario; // Usuario que realizó el pedido
 
     @Column(name = "precio_total", nullable = false)
@@ -29,62 +28,6 @@ public class Pedido {
     @Column(name = "estado", nullable = false)
     private String estado = "Pendiente"; // Estado del pedido
 
-    @OneToMany(mappedBy = "pedido")
-    @JsonManagedReference("pedido-detalle") // Rompe la recursión en la serialización
+    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DetallePedido> detallesPedido; // Conjunto de detalles del pedido
-
-    // Constructor vacío
-    public Pedido() {
-    }
-
-    // Constructor con parámetros
-    public Pedido(Long id, Usuario usuario, Double precioTotal, String estado, Set<DetallePedido> detallesPedido) {
-        this.id = id;
-        this.usuario = usuario;
-        this.precioTotal = precioTotal;
-        this.estado = estado;
-        this.detallesPedido = detallesPedido;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Double getPrecioTotal() {
-        return precioTotal;
-    }
-
-    public void setPrecioTotal(Double precioTotal) {
-        this.precioTotal = precioTotal;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public Set<DetallePedido> getDetallesPedido() {
-        return detallesPedido;
-    }
-
-    public void setDetallesPedido(Set<DetallePedido> detallesPedido) {
-        this.detallesPedido = detallesPedido;
-    }
 }
-

@@ -1,28 +1,27 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-
-/**
- * Entidad que representa la tabla de reseñas de productos.
- */
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "reseñas_productos")
+@Data
+@NoArgsConstructor
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ResenaProducto {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Identificador único para cada reseña de producto
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producto_id", nullable = false)
-    @JsonBackReference("producto-reseña") // Rompe la recursión en la serialización
     private Producto producto; // Producto al que pertenece la reseña
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonBackReference("usuario-reseñaProducto") // Breaks the recursion in serialization
     private Usuario usuario; // Usuario que realizó la reseña
 
     @Column(name = "calificacion", nullable = false)
@@ -30,58 +29,4 @@ public class ResenaProducto {
 
     @Column(name = "resena")
     private String resena; // Texto de la reseña
-
-    // Constructor vacío
-    public ResenaProducto() {
-    }
-
-    // Constructor con parámetros
-    public ResenaProducto(Long id, String reseña, Integer calificacion, Usuario usuario, Producto producto) {
-        this.id = id;
-        this.resena = resena;
-        this.calificacion = calificacion;
-        this.usuario = usuario;
-        this.producto = producto;
-    }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getReseña() {
-        return resena;
-    }
-
-    public void setReseña(String reseña) {
-        this.resena = reseña;
-    }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(Integer calificacion) {
-        this.calificacion = calificacion;
-    }
 }
