@@ -1,64 +1,95 @@
 package pe.edu.cibertec.evertrailbackend.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.cibertec.evertrailbackend.dto.DetallePedidoDTO;
 import pe.edu.cibertec.evertrailbackend.entidad.DetallePedido;
 import pe.edu.cibertec.evertrailbackend.serviceImp.DetallePedidoService;
-import java.util.Set;
+import pe.edu.cibertec.evertrailbackend.utils.MensajeResponse;
+import pe.edu.cibertec.evertrailbackend.utils.ModeloNotFoundException;
 
-@CrossOrigin(origins = "http://localhost:4200") // Permite solicitudes desde http://localhost:4200
-@RestController // Indica que esta clase es un controlador REST
-@RequestMapping("/api/detalles-pedido") // Mapea las solicitudes HTTP a /api/detalles-pedido
+import java.util.List;
+import java.util.stream.Collectors;
+
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+@RequestMapping("/api/detalles-pedido")
 public class DetallePedidoController {
 
-    @Autowired // Inyección de dependencias de Spring
+    @Autowired
     private DetallePedidoService detallePedidoService;
 
-    @GetMapping("/listar") // Mapea las solicitudes GET a /api/detalles-pedido/listar
-    public ResponseEntity<Set<DetallePedido>> getAllDetallesPedido() {
+    @Autowired
+    private ModelMapper mapper;
+
+    @GetMapping("/listar")
+    public ResponseEntity<?> getAllDetallesPedido() {
         try {
-            return ResponseEntity.ok(detallePedidoService.listar()); // Retorna todos los detalles de pedido
+            List<DetallePedidoDTO> detallesPedidoDTO = detallePedidoService.listar()
+                    .stream()
+                    .map(detalle -> mapper.map(detalle, DetallePedidoDTO.class))
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Detalles de pedido listados correctamente").object(detallesPedidoDTO).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build(); // Retorna un error 500 si ocurre una excepción
+            return ResponseEntity.internalServerError().body(MensajeResponse.builder().mensaje("Error al listar los detalles de pedido").object(null).build());
         }
     }
 
-    @GetMapping("/buscar/{id}") // Mapea las solicitudes GET a /api/detalles-pedido/buscar/{id}
-    public ResponseEntity<DetallePedido> getDetallePedidoById(@PathVariable("id") Long id) {
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<?> getDetallePedidoById(@PathVariable("id") Long id) {
         try {
-            return ResponseEntity.ok(detallePedidoService.buscar(id)); // Retorna el detalle de pedido con el ID especificado
+            DetallePedido detallePedido = detallePedidoService.buscar(id);
+            if (detallePedido == null) {
+                throw new ModeloNotFoundException("Detalle de pedido no encontrado con ID: " + id);
+            }
+            DetallePedidoDTO detallePedidoDTO = mapper.map(detallePedido, DetallePedidoDTO.class);
+            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Detalle de pedido encontrado").object(detallePedidoDTO).build(), HttpStatus.OK);
+        } catch (ModeloNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensajeResponse.builder().mensaje(e.getMessage()).object(null).build());
         } catch (Exception e) {
-            return ResponseEntity.notFound().build(); // Retorna un error 404 si no se encuentra el detalle de pedido
+            return ResponseEntity.internalServerError().body(MensajeResponse.builder().mensaje("Error al buscar el detalle de pedido").object(null).build());
         }
     }
 
-    @PostMapping("/registrar") // Mapea las solicitudes POST a /api/detalles-pedido/registrar
-    public ResponseEntity<DetallePedido> createDetallePedido(@RequestBody DetallePedido detallePedido) {
+    @PostMapping("/registrar")
+    public ResponseEntity<?> createDetallePedido(@RequestBody DetallePedidoDTO detallePedidoDTO) {
         try {
-            return ResponseEntity.ok(detallePedidoService.registrar(detallePedido)); // Crea un nuevo detalle de pedido
+            DetallePedido detallePedido = mapper.map(detallePedidoDTO, DetallePedido.class);
+            DetallePedido detalleRegistrado = detallePedidoService.registrar(detallePedido);
+            DetallePedidoDTO detalleRegistradoDTO = mapper.map(detalleRegistrado, DetallePedidoDTO.class);
+            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Detalle de pedido registrado exitosamente").object(detalleRegistradoDTO).build(), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build(); // Retorna un error 500 si ocurre una excepción
+            return ResponseEntity.internalServerError().body(MensajeResponse.builder().mensaje("Error al registrar el detalle de pedido").object(null).build());
         }
     }
 
-    @PutMapping("/actualizar/{id}") // Mapea las solicitudes PUT a /api/detalles-pedido/actualizar/{id}
-    public ResponseEntity<DetallePedido> updateDetallePedido(@PathVariable("id") Long id, @RequestBody DetallePedido detallePedido) {
+    @PutMapping("/actualizar/{id}")
+    public ResponseEntity<?> updateDetallePedido(@PathVariable("id") Long id, @RequestBody DetallePedidoDTO detallePedidoDTO) {
         try {
-            detallePedido.setId(id); // Establece el ID del detalle de pedido
-            return ResponseEntity.ok(detallePedidoService.actualizar(detallePedido)); // Actualiza el detalle de pedido
+            DetallePedido detallePedido = mapper.map(detallePedidoDTO, DetallePedido.class);
+            detallePedido.setId(id);
+            DetallePedido detalleActualizado = detallePedidoService.actualizar(detallePedido);
+            DetallePedidoDTO detalleActualizadoDTO = mapper.map(detalleActualizado, DetallePedidoDTO.class);
+            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Detalle de pedido actualizado exitosamente").object(detalleActualizadoDTO).build(), HttpStatus.OK);
+        } catch (ModeloNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensajeResponse.builder().mensaje(e.getMessage()).object(null).build());
         } catch (Exception e) {
-            return ResponseEntity.notFound().build(); // Retorna un error 404 si no se encuentra el detalle de pedido
+            return ResponseEntity.internalServerError().body(MensajeResponse.builder().mensaje("Error al actualizar el detalle de pedido").object(null).build());
         }
     }
 
-    @DeleteMapping("/eliminar/{id}") // Mapea las solicitudes DELETE a /api/detalles-pedido/eliminar/{id}
-    public ResponseEntity<Void> deleteDetallePedido(@PathVariable("id") Long id) {
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<?> deleteDetallePedido(@PathVariable("id") Long id) {
         try {
-            detallePedidoService.eliminar(id); // Elimina el detalle de pedido con el ID especificado
-            return ResponseEntity.noContent().build(); // Retorna un código 204 si la eliminación es exitosa
+            detallePedidoService.eliminar(id);
+            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Detalle de pedido eliminado exitosamente").object(null).build(), HttpStatus.NO_CONTENT);
+        } catch (ModeloNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensajeResponse.builder().mensaje(e.getMessage()).object(null).build());
         } catch (Exception e) {
-            return ResponseEntity.notFound().build(); // Retorna un error 404 si no se encuentra el detalle de pedido
+            return ResponseEntity.internalServerError().body(MensajeResponse.builder().mensaje("Error al eliminar el detalle de pedido").object(null).build());
         }
     }
 }

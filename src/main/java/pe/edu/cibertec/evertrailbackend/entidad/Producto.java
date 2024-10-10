@@ -1,6 +1,7 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,38 +9,48 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-@Entity
-@Table(name = "productos")
-@Data
-@NoArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Entity // Indica que esta clase es una entidad de JPA
+@Table(name = "productos") // Define el nombre de la tabla en la base de datos
+@Data // Genera automáticamente getters, setters, toString, hashCode y equals
+@NoArgsConstructor // Genera un constructor sin parámetros
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id") // Evita problemas de referencias circulares en la serialización
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Ignora propiedades de Hibernate que no son necesarias en la serialización
 public class Producto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Identificador único para cada producto
 
-    @Column(name = "nombre", nullable = false)
-    private String nombre; // Nombre del producto, no nulo
+    @Id // Indica que este campo es la clave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera automáticamente el valor de la clave primaria
+    private Long id;
 
-    @Column(name = "descripcion")
-    private String descripcion; // Descripción del producto
+    @Column(name = "nombre", nullable = false) // Nombre del producto, no puede ser nulo
+    private String nombre;
 
-    @Column(name = "precio", nullable = false)
-    private Double precio; // Precio del producto, no nulo
+    @Column(name = "descripcion") // Descripción del producto
+    private String descripcion;
 
-    @Column(name = "stock", nullable = false)
-    private Integer stock; // Cantidad de stock del producto, no nulo
+    @Column(name = "precio", nullable = false) // Precio del producto, no puede ser nulo
+    private Double precio;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "categoria_id")
-    private Categoria categoria; // Categoría a la que pertenece el producto
+    @Column(name = "stock", nullable = false) // Cantidad en stock del producto, no puede ser nulo
+    private Integer stock;
 
-    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<ImagenProducto> imagenesProductos; // Conjunto de imágenes del producto
+    // Relación muchos a uno con Categoria
+    @ManyToOne(fetch = FetchType.LAZY) // Carga perezosa para evitar cargar categorías innecesariamente
+    @JoinColumn(name = "categoria_id") // Relación con la categoría asociada
+    private Categoria categoria;
 
-    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<DetallePedido> detallesPedido; // Conjunto de detalles de pedidos que incluyen este producto
+    // Relación uno a muchos con ImagenProducto
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Relación con las imágenes del producto
+    private Set<ImagenProducto> imagenesProductos;
 
-    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<ResenaProducto> reseñasProductos; // Conjunto de reseñas del producto
+    // Relación uno a muchos con DetallePedido
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Relación con los detalles de los pedidos
+    private Set<DetallePedido> detallesPedido;
+
+    // Relación uno a muchos con ResenaProducto
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Relación con las reseñas del producto
+    private Set<ResenaProducto> reseñasProductos;
+
+    // Relación uno a muchos con CarritoDetalle
+    @OneToMany(mappedBy = "producto", fetch = FetchType.LAZY, cascade = CascadeType.ALL) // Relación con los detalles del carrito
+    private Set<CarritoDetalle> carritoDetalles; // Nueva conexión con CarritoDetalle
 }

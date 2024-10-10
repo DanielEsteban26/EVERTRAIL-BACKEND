@@ -13,6 +13,10 @@ public class RoleService extends ICRUDImp<Role, Long> {
     @Autowired
     private RoleRepository repo;
 
+    public Role buscarPorId(Long id) {
+        return repo.findById(id).orElse(null);
+    }
+
     @Override
     public JpaRepository<Role, Long> getJpaRepository() {
         return repo;

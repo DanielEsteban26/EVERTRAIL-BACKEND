@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pe.edu.cibertec.evertrailbackend.serviceImp.TokenRevocationService;
@@ -29,6 +30,9 @@ public class WebSecurityConfig {
                 .cors(withDefaults()) // Habilitar CORS
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
+                        // Permitir acceso a Swagger sin autenticación (incluyendo la ruta personalizada)
+                        .requestMatchers("/doc/**","/v3/**").permitAll()
+
                         // Permisos para Administrador
                         .requestMatchers("/api/usuarios/**").hasRole("Administrador")
                         .requestMatchers("/api/categorias/**").hasRole("Administrador")
@@ -37,19 +41,28 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/imagenes-producto/**").hasRole("Administrador")
                         .requestMatchers("/api/metodos-pago/**").hasRole("Administrador")
                         .requestMatchers("/api/direcciones-envio/**").hasRole("Administrador")
+
                         // Permisos para Usuario No Registrado
                         .requestMatchers(HttpMethod.GET, "/api/productos/**", "/api/categorias/**").permitAll()
+
                         // Permisos para Cliente Registrado
                         .requestMatchers("/api/pedidos/**").hasRole("Cliente")
                         .requestMatchers("/api/resenas/**").hasRole("Cliente")
                         .requestMatchers("/api/cuenta/**").hasRole("Cliente")
                         .requestMatchers("/api/metodos-pago/**").hasRole("Cliente")
                         .requestMatchers("/api/direcciones-envio/**").hasRole("Cliente")
+
                         // Permitir acceso a la página de login y logout
                         .requestMatchers(LOGIN_URL, "/user/login", "/user/logout").permitAll()
+
                         // Cualquier otra solicitud requiere autenticación
                         .anyRequest().authenticated())
                 .addFilterAfter(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

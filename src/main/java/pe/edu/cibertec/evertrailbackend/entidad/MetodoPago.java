@@ -1,40 +1,38 @@
 package pe.edu.cibertec.evertrailbackend.entidad;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Entidad que representa la tabla de métodos de pago.
- */
-@Entity
-@Table(name = "metodos_pago")
-@Data
-@NoArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@Entity // Indica que esta clase es una entidad de JPA
+@Table(name = "metodos_pago") // Define el nombre de la tabla en la base de datos
+@Data // Genera automáticamente getters, setters, toString, hashCode y equals
+@NoArgsConstructor // Genera un constructor sin parámetros
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id") // Evita problemas de referencias circulares en la serialización
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Ignora propiedades de Hibernate que no son necesarias en la serialización
 public class MetodoPago {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Identificador único para cada método de pago
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario; // Usuario al que pertenece el método de pago
+    @Id // Indica que este campo es la clave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Genera automáticamente el valor de la clave primaria
+    private Long id;
 
-    @Column(name = "numero_tarjeta", nullable = false)
-    private String numeroTarjeta; // Número de la tarjeta de crédito
+    // Relación muchos a uno con Usuario
+    @ManyToOne(fetch = FetchType.LAZY) // Carga perezosa para evitar cargar usuarios innecesariamente
+    @JoinColumn(name = "usuario_id", nullable = false) // Relación con el usuario asociado al método de pago
+    private Usuario usuario;
 
-    @Column(name = "nombre_titular", nullable = false)
-    private String nombreTitular; // Nombre del titular de la tarjeta
+    @Column(name = "numero_tarjeta", nullable = false) // Campo para el número de tarjeta
+    private String numeroTarjeta;
 
-    @Column(name = "fecha_expiracion", nullable = false)
-    private String fechaExpiracion; // Fecha de expiración de la tarjeta
+    @Column(name = "nombre_titular", nullable = false) // Campo para el nombre del titular de la tarjeta
+    private String nombreTitular;
 
-    @Column(name = "cvv", nullable = false)
-    private String cvv; // Código de seguridad de la tarjeta
+    @Column(name = "fecha_expiracion", nullable = false) // Campo para la fecha de expiración de la tarjeta
+    private String fechaExpiracion;
+
+    @Column(name = "cvv", nullable = false) // Campo para el código CVV de la tarjeta
+    private String cvv;
 }
