@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.cibertec.evertrailbackend.dto.CarritoDetalleDTO;
 import pe.edu.cibertec.evertrailbackend.entidad.CarritoDetalle;
+import pe.edu.cibertec.evertrailbackend.entidad.Producto;
 import pe.edu.cibertec.evertrailbackend.serviceImp.CarritoDetalleService;
 import pe.edu.cibertec.evertrailbackend.utils.MensajeResponse;
 import pe.edu.cibertec.evertrailbackend.utils.ModeloNotFoundException;
@@ -26,42 +27,15 @@ public class CarritoDetalleController {
     @Autowired
     private ModelMapper mapper;
 
-    @GetMapping("/listar")
-    public ResponseEntity<?> getAllCarritoDetalles() {
-        try {
-            Set<CarritoDetalle> lista = carritoDetalleService.listar();
-            if (lista.isEmpty()) {
-                return new ResponseEntity<>(MensajeResponse.builder().mensaje("No hay registros").object(null).build(), HttpStatus.OK);
-            } else {
-                Set<CarritoDetalleDTO> listaDTO = lista.stream().map(m -> mapper.map(m, CarritoDetalleDTO.class)).collect(Collectors.toSet());
-                return new ResponseEntity<>(MensajeResponse.builder().mensaje("Existen registros").object(listaDTO).build(), HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
-    }
-
-    @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> getCarritoDetalleById(@PathVariable("id") Long id) {
-        try {
-            CarritoDetalle carritoDetalle = carritoDetalleService.buscar(id);
-            if (carritoDetalle == null) {
-                throw new ModeloNotFoundException("ID NO ENCONTRADO : " + id);
-            }
-            CarritoDetalleDTO carritoDetalleDTO = mapper.map(carritoDetalle, CarritoDetalleDTO.class);
-            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Encontrado").object(carritoDetalleDTO).build(), HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @PostMapping("/registrar")
-    public ResponseEntity<String> createCarritoDetalle(@Valid @RequestBody CarritoDetalleDTO carritoDetalleDTO) {
+    public ResponseEntity<?> createCarritoDetalle(@Valid @RequestBody CarritoDetalleDTO carritoDetalleDTO) {
         try {
             CarritoDetalle carritoDetalle = mapper.map(carritoDetalleDTO, CarritoDetalle.class);
             carritoDetalleService.registrar(carritoDetalle);
-            return ResponseEntity.ok("Detalle del carrito registrado exitosamente.");
+            CarritoDetalleDTO nuevoCarritoDetalleDTO = mapper.map(carritoDetalle, CarritoDetalleDTO.class);
+            return ResponseEntity.ok(nuevoCarritoDetalleDTO); // Devuelve el detalle del carrito creado como JSON
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime el stack trace para obtener más detalles del error
             return ResponseEntity.internalServerError().body("Ocurrió un error al registrar el detalle del carrito.");
         }
     }
@@ -79,12 +53,47 @@ public class CarritoDetalleController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<Void> deleteCarritoDetalle(@PathVariable("id") Long id) {
+    public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
         try {
             carritoDetalleService.eliminar(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+            e.printStackTrace(); // Imprimir el stack trace para depuración
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el producto del carrito");
+        }
+    }
+
+    @DeleteMapping("/eliminar-todos/{carritoId}")
+    public ResponseEntity<?> eliminarTodosLosProductos(@PathVariable Long carritoId) {
+        try {
+            carritoDetalleService.eliminarTodosLosProductos(carritoId);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace(); // Imprimir el stack trace para depuración
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar todos los productos del carrito");
+        }
+    }
+
+    @GetMapping("/listar")
+    public ResponseEntity<?> getAllCarritoDetalles() {
+        try {
+            Set<CarritoDetalle> lista = carritoDetalleService.listar();
+            if (lista.isEmpty()) {
+                return new ResponseEntity<>(MensajeResponse.builder().mensaje("No hay registros").object(null).build(), HttpStatus.OK);
+            } else {
+                Set<CarritoDetalleDTO> listaDTO = lista.stream().map(m -> {
+                    CarritoDetalleDTO dto = mapper.map(m, CarritoDetalleDTO.class);
+                    Producto producto = m.getProducto();
+                    if (producto != null) {
+                        dto.setProductoNombre(producto.getNombre());
+                        dto.setProductoDescripcion(producto.getDescripcion());
+                    }
+                    return dto;
+                }).collect(Collectors.toSet());
+                return new ResponseEntity<>(MensajeResponse.builder().mensaje("Existen registros").object(listaDTO).build(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

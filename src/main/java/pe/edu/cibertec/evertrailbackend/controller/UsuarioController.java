@@ -28,10 +28,10 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @Autowired
-    private RoleService roleService;
+    private ModelMapper mapper;
 
     @Autowired
-    private ModelMapper mapper;
+    private RoleService roleService;
 
     @GetMapping("/listar")
     public ResponseEntity<?> getAllUsuarios() {

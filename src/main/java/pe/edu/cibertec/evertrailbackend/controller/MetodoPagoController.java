@@ -9,7 +9,6 @@ import pe.edu.cibertec.evertrailbackend.dto.MetodoPagoDTO;
 import pe.edu.cibertec.evertrailbackend.entidad.MetodoPago;
 import pe.edu.cibertec.evertrailbackend.serviceImp.MetodoPagoService;
 import pe.edu.cibertec.evertrailbackend.utils.MensajeResponse;
-import pe.edu.cibertec.evertrailbackend.utils.ModeloNotFoundException;
 
 import java.util.List;
 import java.util.Set;
@@ -44,68 +43,40 @@ public class MetodoPagoController {
         }
     }
 
-    @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> getMetodoPagoById(@PathVariable("id") Long id) {
-        try {
-            MetodoPago metodoPago = metodoPagoService.buscar(id);
-            if (metodoPago == null) {
-                throw new ModeloNotFoundException("ID NO ENCONTRADO : " + id);
-            }
-            MetodoPagoDTO metodoPagoDTO = mapper.map(metodoPago, MetodoPagoDTO.class);
-            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Método de pago encontrado").object(metodoPagoDTO).build(), HttpStatus.OK);
-        } catch (ModeloNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(MensajeResponse.builder().mensaje(e.getMessage()).object(null).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MensajeResponse.builder().mensaje("Error al buscar el método de pago").object(null).build());
-        }
-    }
-
     @PostMapping("/registrar")
-    public ResponseEntity<?> createMetodoPago(@RequestBody MetodoPagoDTO metodoPagoDTO) {
+    public ResponseEntity<?> registrarMetodoPago(@RequestBody MetodoPagoDTO metodoPagoDTO) {
         try {
             MetodoPago metodoPago = mapper.map(metodoPagoDTO, MetodoPago.class);
-            MetodoPago metodoPagoGuardado = metodoPagoService.registrar(metodoPago);
-            MetodoPagoDTO metodoPagoGuardadoDTO = mapper.map(metodoPagoGuardado, MetodoPagoDTO.class);
+            metodoPagoService.registrar(metodoPago);
+            MetodoPagoDTO nuevoMetodoPagoDTO = mapper.map(metodoPago, MetodoPagoDTO.class);
             return new ResponseEntity<>(MensajeResponse.builder()
                     .mensaje("Método de pago registrado exitosamente")
-                    .object(metodoPagoGuardadoDTO)
-                    .build(), HttpStatus.CREATED);
+                    .object(nuevoMetodoPagoDTO)
+                    .build(), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(MensajeResponse.builder().mensaje("Error al registrar el método de pago").object(null).build());
         }
     }
 
-    @PutMapping("/actualizar/{id}")
-    public ResponseEntity<?> updateMetodoPago(@PathVariable("id") Long id, @RequestBody MetodoPagoDTO metodoPagoDTO) {
+    @PostMapping("/procesar")
+    public ResponseEntity<?> procesarPago(@RequestBody MetodoPagoDTO metodoPagoDTO) {
         try {
-            MetodoPago metodoPago = mapper.map(metodoPagoDTO, MetodoPago.class);
-            metodoPago.setId(id);
-            MetodoPago metodoPagoActualizado = metodoPagoService.actualizar(metodoPago);
-            MetodoPagoDTO metodoPagoActualizadoDTO = mapper.map(metodoPagoActualizado, MetodoPagoDTO.class);
-            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Método de pago actualizado exitosamente").object(metodoPagoActualizadoDTO).build(), HttpStatus.OK);
-        } catch (ModeloNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(MensajeResponse.builder().mensaje(e.getMessage()).object(null).build());
+            boolean pagoProcesado = metodoPagoService.procesarPago(metodoPagoDTO);
+            if (pagoProcesado) {
+                return new ResponseEntity<>(MensajeResponse.builder()
+                        .mensaje("Pago procesado exitosamente")
+                        .object(null)
+                        .build(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(MensajeResponse.builder()
+                        .mensaje("Error al procesar el pago")
+                        .object(null)
+                        .build(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MensajeResponse.builder().mensaje("Error al actualizar el método de pago").object(null).build());
-        }
-    }
-
-    @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<?> deleteMetodoPago(@PathVariable("id") Long id) {
-        try {
-            metodoPagoService.eliminar(id);
-            return new ResponseEntity<>(MensajeResponse.builder().mensaje("Método de pago eliminado exitosamente").object(null).build(), HttpStatus.NO_CONTENT);
-        } catch (ModeloNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(MensajeResponse.builder().mensaje(e.getMessage()).object(null).build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(MensajeResponse.builder().mensaje("Error al eliminar el método de pago").object(null).build());
+                    .body(MensajeResponse.builder().mensaje("Error al procesar el pago").object(null).build());
         }
     }
 }

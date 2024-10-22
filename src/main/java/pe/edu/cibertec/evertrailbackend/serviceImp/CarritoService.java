@@ -8,6 +8,8 @@ import pe.edu.cibertec.evertrailbackend.entidad.Carrito;
 import pe.edu.cibertec.evertrailbackend.repositorio.CarritoRepository;
 import pe.edu.cibertec.evertrailbackend.serviceImp.IMP.ICRUDImp;
 
+import java.util.Optional;
+
 @Service
 public class CarritoService extends ICRUDImp<Carrito, Long> {
 
@@ -17,5 +19,8 @@ public class CarritoService extends ICRUDImp<Carrito, Long> {
     @Override
     public JpaRepository<Carrito, Long> getJpaRepository() {
         return repo;
+    }
+    public Optional<Carrito> obtenerCarritoConProductos(Long idCarrito) {
+        return repo.findById(idCarrito);
     }
 }

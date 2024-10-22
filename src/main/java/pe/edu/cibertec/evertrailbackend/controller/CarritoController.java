@@ -56,12 +56,14 @@ public class CarritoController {
     }
 
     @PostMapping("/registrar")
-    public ResponseEntity<String> createCarrito(@Valid @RequestBody CarritoDTO carritoDTO) {
+    public ResponseEntity<?> createCarrito(@Valid @RequestBody CarritoDTO carritoDTO) {
         try {
             Carrito carrito = mapper.map(carritoDTO, Carrito.class);
             carritoService.registrar(carrito);
-            return ResponseEntity.ok("Carrito registrado exitosamente.");
+            CarritoDTO nuevoCarritoDTO = mapper.map(carrito, CarritoDTO.class);
+            return ResponseEntity.ok(nuevoCarritoDTO); // Devuelve el carrito creado como JSON
         } catch (Exception e) {
+            e.printStackTrace(); // Imprime el stack trace para obtener más detalles del error
             return ResponseEntity.internalServerError().body("Ocurrió un error al registrar el carrito.");
         }
     }
@@ -86,5 +88,12 @@ public class CarritoController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/{idCarrito}")
+    public ResponseEntity<?> obtenerCarritoConProductos(@PathVariable Long idCarrito) {
+        return carritoService.obtenerCarritoConProductos(idCarrito)
+                .map(carrito -> ResponseEntity.ok().body(carrito))
+                .orElse(ResponseEntity.notFound().build());
     }
 }

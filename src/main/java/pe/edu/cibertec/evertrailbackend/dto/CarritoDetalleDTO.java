@@ -22,4 +22,8 @@ public class CarritoDetalleDTO {
     @NotNull(message = "El precio no puede ser nulo")
     @Positive(message = "El precio debe ser un número positivo")
     private Double precio;
+
+    private String productoNombre; // Añadir el nombre del producto
+    private String productoDescripcion; // Añadir la descripción del producto
+
 }

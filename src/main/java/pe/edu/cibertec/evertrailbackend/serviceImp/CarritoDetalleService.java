@@ -1,5 +1,6 @@
 package pe.edu.cibertec.evertrailbackend.serviceImp;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -16,5 +17,9 @@ public class CarritoDetalleService extends ICRUDImp<CarritoDetalle, Long> {
     @Override
     public JpaRepository<CarritoDetalle, Long> getJpaRepository() {
         return repo;
+    }
+    @Transactional
+    public void eliminarTodosLosProductos(Long carritoId) {
+        repo.deleteByCarritoId(carritoId);
     }
 }

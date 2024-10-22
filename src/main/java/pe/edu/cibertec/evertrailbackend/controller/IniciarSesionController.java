@@ -53,12 +53,12 @@ public class IniciarSesionController {
         String token = jwtAuthenticationConfig.getJWTToken(userResult.getNombreUsuario(), roles);
         String rol = roles.isEmpty() ? "Cliente" : roles.get(0);
 
-        LoginResponse loginResponse = new LoginResponse(token, rol, "OK, " + userResult.getNombreUsuario() + " logueado");
+        LoginResponse loginResponse = new LoginResponse(token, userResult.getNombreUsuario(), rol, "OK, " + userResult.getNombreUsuario() + " logueado", userResult.getId());
         return new ResponseEntity<>(MensajeResponse.builder().mensaje("Inicio de sesión exitoso").object(loginResponse).build(), HttpStatus.OK);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody String token) {
+    public ResponseEntity<?> logout(@RequestBody String token){
         try {
             tokenRevocationService.revokeToken(token);
             return new ResponseEntity<>(MensajeResponse.builder().mensaje("Token revocado exitosamente").object(null).build(), HttpStatus.OK);
