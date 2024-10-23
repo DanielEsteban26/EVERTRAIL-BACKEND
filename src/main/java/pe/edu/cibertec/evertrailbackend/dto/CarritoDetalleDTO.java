@@ -23,7 +23,4 @@ public class CarritoDetalleDTO {
     @Positive(message = "El precio debe ser un número positivo")
     private Double precio;
 
-    private String productoNombre; // Añadir el nombre del producto
-    private String productoDescripcion; // Añadir la descripción del producto
-
 }

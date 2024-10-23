@@ -32,4 +32,5 @@ public class CarritoDetalle {
 
     @Column(name = "precio", nullable = false) // Precio del producto en el carrito
     private Double precio;
+
 }

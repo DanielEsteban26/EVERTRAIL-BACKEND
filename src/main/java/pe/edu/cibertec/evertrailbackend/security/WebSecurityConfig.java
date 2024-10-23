@@ -38,7 +38,7 @@ public class WebSecurityConfig {
                         // metodo-pago no olvidarte para agregar como crud en el front como cliente
                         .requestMatchers("/api/metodos-pago/**").hasRole("Cliente")
                         // Permisos para Cliente Registrado
-                        .requestMatchers("/api/carrito-detalles/**").hasRole("Cliente")
+                        .requestMatchers("/api/carritos/**").permitAll()
 
                         // Permitir acceso a la página de login y logout
                         .requestMatchers( "/user/login", "/user/logout").permitAll()

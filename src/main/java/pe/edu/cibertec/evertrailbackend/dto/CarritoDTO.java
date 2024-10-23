@@ -3,6 +3,7 @@ package pe.edu.cibertec.evertrailbackend.dto;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -14,4 +15,9 @@ public class CarritoDTO {
     private Long usuarioId;
 
     private Set<CarritoDetalleDTO> carritoDetalles; // Detalles del carrito
+
+    // Constructor vacío (opcional)
+    public CarritoDTO() {
+        this.carritoDetalles = new HashSet<>();
+    }
 }
